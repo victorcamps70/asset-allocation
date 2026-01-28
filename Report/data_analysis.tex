@@ -1,0 +1,69 @@
+\section{Data Analysis}
+
+\subsection{Missing Values Analysis}
+
+\subsubsection{Overview}
+
+Missing values are a critical aspect of any machine learning project. They can arise from various sources such as data collection errors, merging issues, or legitimate absence of information. Understanding their distribution and impact is essential for building robust models.
+
+\subsubsection{Observations}
+
+Our analysis of the training dataset reveals:
+\begin{itemize}
+    \item \textbf{Training set size}: 527,073 observations
+    \item \textbf{Total features}: 44 columns (including identifiers and target)
+    \item \textbf{Total data points}: $527,073 \times 44 \approx 23.2$ million values
+\end{itemize}
+
+A comprehensive scan of the dataset shows the distribution of
+missing values across all columns.
+The presence of NaN values in historical returns ($\text{RET}_i$), signed volumes ($\text{SIGNED\_VOLUME}_i$),
+and other features can significantly impact model performance: Mostly on $\text{signed\_return\_1}$ and
+$\text{signed\_return\_20}$, that looks odd
+
+
+\subsubsection{Why Missing Values Are Problematic}
+
+Missing values present several challenges:
+
+\paragraph{1. Information Loss}
+When data is missing, we lose potentially valuable information about an allocation's behavior. This reduces the effective feature space available for the model to learn patterns.
+
+\paragraph{2. Biased Estimates}
+Simple imputation strategies (such as replacing NaN with 0) introduce bias:
+\begin{itemize}
+    \item Setting returns to 0 when data is missing suggests zero performance, which may not be accurate
+    \item This can mislead models into learning incorrect relationships between features and targets
+    \item For Ridge regression, this creates artificial zero-coefficients that may distort feature importance
+\end{itemize}
+
+\paragraph{3. Model-Specific Issues}
+
+\begin{itemize}
+    \item \textbf{Ridge Regression}: Assumes continuous input values. Replacing NaN with 0 without normalization can bias coefficients toward features with larger magnitudes
+    \item \textbf{LightGBM}: While it handles missing values natively by learning optimal split points around them, the presence of many NaN values increases model complexity and computational cost
+\end{itemize}
+
+\paragraph{4. Generalization Problems}
+If the test set has a different distribution of missing values than the training set, models may perform poorly on unseen data due to domain shift.
+
+\subsubsection{Benchmark's Approach}
+
+The benchmark notebook handles missing values using a simple strategy:
+
+\begin{lstlisting}[language=Python, breaklines=true]
+# Ridge: Replace NaN with 0
+X_train[features].to_numpy(na_value=0)
+X_test[features].fillna(0).to_numpy(na_value=0)
+
+# LightGBM: Let the algorithm handle it natively
+lgbm.Dataset(X_local_train, label=y_local_train.values)
+\end{lstlisting}
+
+While practical, this approach may not be optimal. Future improvements could include:
+\begin{itemize}
+    \item Forward-fill or backward-fill strategies for time-series data
+    \item Mean or median imputation per allocation
+    \item K-NN imputation based on similar allocations
+    \item Creating explicit ``missing indicator'' features
+\end{itemize}

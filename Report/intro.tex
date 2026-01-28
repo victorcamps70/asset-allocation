@@ -1,5 +1,74 @@
 \section{Introduction}
 
+This task is part of a datachallenge on asset allocation performance forecasting. The challenge aims to predict whether a given asset allocation will have a positive or negative return on the following trading day.
+
+\subsection{Challenge Context}
+
+In systematic trading, traders are constantly faced with numerous candidate asset allocations - portfolio constructions based on recent signals, liquidity flows, or historical patterns. The central question is: \textit{Can we predict whether a given asset allocation is worth following or shorting?}
+
+An \textbf{asset allocation} is a systematic method of constructing a portfolio using predefined signals or rules. Each allocation is defined by a set of portfolio weights (which can be positive or negative) applied on a specific day and held for one trading session. From one day to another, an allocation can rebalance its weights depending on the rules used to compute it.
+
+\subsection{Dataset Description}
+
+For each allocation and each timestamp, we are provided with:
+\begin{itemize}
+      \item \textbf{20-day history} of allocation returns
+      \item \textbf{20-day history} of volume-weighted liquidity behavior
+      \item \textbf{Median daily turnover} of the allocation
+      \item \textbf{Anonymized group} of the allocation
+      \item \textbf{Target variable} : the true return of the allocation on the following trading day
+\end{itemize}
+
+The dataset consists of:
+\begin{itemize}
+      \item \textbf{Training set} : 527,073 observations
+      \item \textbf{Test set} : 31,870 observations
+\end{itemize}
+
+\subsection{Problem Formulation}
+
+This is a \textbf{binary classification problem} where we must predict the \textit{sign} of the allocation's next-day return:
+\begin{itemize}
+      \item \textit{Positive return} $\Rightarrow$ Trust the allocation (go long)
+      \item \textit{Negative return} $\Rightarrow$ Short the allocation
+\end{itemize}
+
+\subsubsection{Mathematical Definition}
+
+For a given trading day $t$, an allocation $S$, and $M$ assets in a trading universe, let:
+
+\begin{itemize}
+      \item $\mathbf{w}_{S,t} = (w_{S,t,1}, w_{S,t,2}, \ldots, w_{S,t,M})$ be the weights of allocation $S$ at time $t$
+      \item $r_{i,t+1}$ be the performance (return) of asset $i$ from day $t$ to day $t+1$
+\end{itemize}
+
+The realized return of allocation $S$ at time $t+1$ is given by:
+\begin{equation}
+      r_{S,t+1} = \sum_{i=1}^{M} w_{S,t,i} \cdot r_{i,t+1}
+\end{equation}
+
+The task is to predict the sign of $r_{S,t+1}$ using the 20-day historical information available at time $t$.
+
+\subsubsection{Evaluation Metric}
+
+We evaluate the model based on \textbf{accuracy}, which measures how often the model correctly predicts the direction (sign) of the allocation's next-day return.
+
+For each observation $i$ indexed by timestamp $t$ and allocation $S$, we compute:
+\begin{equation}
+      \text{Accuracy} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}_{\{\text{sign}(\hat{r}_i) = \text{sign}(r_i)\}}
+\end{equation}
+
+where:
+\begin{itemize}
+      \item $N$ is the total number of observations
+      \item $\text{sign}(x) = 1$ if $x > 0$, else $0$
+      \item $r_i = r_{S,t+1}$ is the true next-day return for observation $i$
+      \item $\hat{r}_i = \hat{r}_{S,t+1}$ is the predicted next-day return for observation $i$
+      \item $\mathbf{1}_{\{\cdot\}}$ is the indicator function
+\end{itemize}
+
+Only the sign of the predicted return matters, not its magnitude.
+
 
 
 
