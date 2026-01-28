@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+# Data folder
+data/
+
+# LaTeX build artifacts (Report)
+Report/main.*
+!Report/main.pdf
+!Report/main.tex

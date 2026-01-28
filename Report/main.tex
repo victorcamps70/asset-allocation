@@ -1,0 +1,83 @@
+\documentclass[11pt,a4paper,titlepage,english]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{afterpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{stmaryrd}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tocloft}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage[skip=10pt plus1pt,indent=30pt]{parskip}
+\usepackage{indentfirst}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+% Tout ça pour pouvoir utiliser les euros...
+\usepackage{wasysym}
+\usepackage{newunicodechar}
+\ifdefined\euro\else\newunicodechar{€}{\euro}\fi
+
+\newlength{\subfigwidth}
+\setlength{\subfigwidth}{20mm}
+
+% Configuraciones generales del documento
+
+\newcommand{\Project}{Datachallenge ENS}
+\newcommand{\ProjectTitle}{Asset allocation performance forecasting}
+\newcommand{\ProjectSubject}{}
+\newcommand{\ProjectAutor}{Víctor Camps Abarca \\ & Saïd Tellez Isibasi \\ & Steven Yu }
+\newcommand{\ProjectLocation}{Nantes}
+\newcommand{\ProjectDate}{Jan 28th 2026}
+
+% Configuración de márgenes
+
+\geometry{top=1.3in, bottom=1.5in, left=2.5cm, right=2.5cm, headsep=1.5cm}
+\setlength{\headheight}{62.80324pt}
+
+% Incluir configuraciones externas
+\input{Configuration/config}
+
+\begin{document}
+
+% Portada
+\Portada
+
+% Índice (con salto de página)
+\pagenumbering{roman}  % Usar numeración romana para los índices
+\clearpage  % Nueva página para el índice
+\tableofcontents
+\thispagestyle{fancy}  % Mantener el encabezado en el índice
+\clearpage  % Asegurarse de que esté en una nueva página
+
+% Índice de figuras (con salto de página)
+\listoffigures
+\thispagestyle{fancy}  % Mantener el encabezado en el índice de figuras
+\clearpage  % Nueva página para el índice de figuras
+
+% Índice de tablas (con salto de página)
+\listoftables
+\thispagestyle{fancy}  % Mantener el encabezado en el índice de tablas
+\clearpage  % Nueva página para el índice de tablas
+
+% Continuación con el resto del documento
+\newpage
+\pagenumbering{arabic}  % Reiniciar numeración a números arábigos
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Inicio del contenido del documento
+
+\input{intro}
+
+\input{conclusion}
+
+
+\end{document}
+

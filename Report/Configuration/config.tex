@@ -1,0 +1,63 @@
+% Configuración de portada
+\newcommand{\Portada}{%
+    \begin{titlepage}
+        \begin{center}
+            \vspace*{0in}
+            \begin{figure}[htb]
+                \centering
+                \includegraphics[width=0.6\linewidth]{Configuration/ecn.png}
+            \end{figure}
+
+            \vspace*{0.2in}
+            \rule{\linewidth}{0.4mm}\\
+            \vspace*{0.1in}
+            \begin{huge}
+                \textsc{\ProjectTitle} \\
+            \end{huge}
+            \vspace*{0.1in}
+            \begin{large}
+                \begin{normalsize}
+                    \textsc{\Project} \\
+                    \textsc{\ProjectSubject}
+                \end{normalsize}
+            \end{large}
+            \vspace*{0.2in}
+            \rule{\linewidth}{0.4mm}\\
+            \vspace*{0.6in}
+            \begin{large}
+                \begin{tabular}{l l}
+                    \textit{Authors}: & \ProjectAutor \\
+                                      &               \\
+                                      &               \\
+                                      &               \\
+                \end{tabular}
+            \end{large}
+
+            \vspace*{0.5in}
+            \begin{large}
+                \textsc{\ProjectLocation, \ProjectDate}
+            \end{large}
+        \end{center}
+        \clearpage
+        \null
+        \thispagestyle{empty}
+        \clearpage
+    \end{titlepage}
+}
+
+% Ajuste correcto del offset
+\newlength{\myoddoffset}
+\setlength{\myoddoffset}{-0cm}  % Establece un valor fijo en lugar de combinar márgenes
+\fancyheadoffset[rh]{\myoddoffset}
+\fancyfootoffset[rh]{\myoddoffset}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+% Configuración de la cabecera para el contenido
+\fancyhead[L]{\includegraphics[width=3.5cm]{Configuration/ecn.png}}  % Logo redimensionado
+\fancyhead[R]{\normalsize\Project}  % Proyecto en tamaño normal
+\fancyfoot[RO]{\thepage}  % Número de página alineado a la derecha en el pie
+
+% Ajuste en la línea del encabezado
+\renewcommand{\headrulewidth}{0.4mm}  % Grosor de la línea de la cabecera
