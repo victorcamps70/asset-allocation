@@ -208,6 +208,9 @@ __marimo__/
 # Data folder
 data/
 
+# CatBoost diagnostic files
+catboost_info/
+
 # LaTeX build artifacts (Report)
 Report/main.*
 !Report/main.pdf
