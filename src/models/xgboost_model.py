@@ -94,8 +94,8 @@ y_train_binary = (y_train.values.ravel() > 0).astype(int)
 # Phase 1: Tune n_estimators and max_depth
 print("\nPhase 1: Tuning n_estimators and max_depth (5-fold CV)...")
 param_grid_phase1 = {
-    'n_estimators': [50, 100, 200],
-    'max_depth': [4, 6, 8],
+    "n_estimators": [50, 100, 200],
+    "max_depth": [4, 6, 8],
 }
 
 xgb_base = xgb.XGBClassifier(
@@ -104,34 +104,37 @@ xgb_base = xgb.XGBClassifier(
     colsample_bytree=0.8,
     random_state=42,
     verbosity=0,
-    n_jobs=-1
+    n_jobs=-1,
 )
 
 cv_splitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 grid_search_phase1 = GridSearchCV(
-    xgb_base, param_grid_phase1,
+    xgb_base,
+    param_grid_phase1,
     cv=cv_splitter,
-    scoring='accuracy',
+    scoring="accuracy",
     n_jobs=-1,
-    verbose=0
+    verbose=0,
 )
 
 grid_search_phase1.fit(X_train[features], y_train_binary)
 
 # Get best parameters from phase 1
-best_depth = grid_search_phase1.best_params_['max_depth']
-best_n_est = grid_search_phase1.best_params_['n_estimators']
+best_depth = grid_search_phase1.best_params_["max_depth"]
+best_n_est = grid_search_phase1.best_params_["n_estimators"]
 phase1_score = grid_search_phase1.best_score_
 
-print(f"  ✓ Phase 1 complete - Best n_estimators: {best_n_est}, Best max_depth: {best_depth}")
+print(
+    f"  ✓ Phase 1 complete - Best n_estimators: {best_n_est}, Best max_depth: {best_depth}"
+)
 print(f"    CV Accuracy: {phase1_score:.4f}")
 
 # Phase 2: Tune learning_rate and subsample
 print("\nPhase 2: Tuning learning_rate and subsample (5-fold CV)...")
 param_grid_phase2 = {
-    'learning_rate': [0.01, 0.05, 0.1, 0.2],
-    'subsample': [0.6, 0.8, 1.0],
+    "learning_rate": [0.01, 0.05, 0.1, 0.2],
+    "subsample": [0.6, 0.8, 1.0],
 }
 
 xgb_base2 = xgb.XGBClassifier(
@@ -140,24 +143,25 @@ xgb_base2 = xgb.XGBClassifier(
     colsample_bytree=0.8,
     random_state=42,
     verbosity=0,
-    n_jobs=-1
+    n_jobs=-1,
 )
 
 grid_search_phase2 = GridSearchCV(
-    xgb_base2, param_grid_phase2,
+    xgb_base2,
+    param_grid_phase2,
     cv=cv_splitter,
-    scoring='accuracy',
+    scoring="accuracy",
     n_jobs=-1,
-    verbose=0
+    verbose=0,
 )
 
 grid_search_phase2.fit(X_train[features], y_train_binary)
 
 # Extract best parameters
-XGB_N_ESTIMATORS = grid_search_phase2.best_params_.get('n_estimators', best_n_est)
-XGB_MAX_DEPTH = grid_search_phase2.best_params_.get('max_depth', best_depth)
-XGB_LEARNING_RATE = grid_search_phase2.best_params_['learning_rate']
-XGB_SUBSAMPLE = grid_search_phase2.best_params_['subsample']
+XGB_N_ESTIMATORS = grid_search_phase2.best_params_.get("n_estimators", best_n_est)
+XGB_MAX_DEPTH = grid_search_phase2.best_params_.get("max_depth", best_depth)
+XGB_LEARNING_RATE = grid_search_phase2.best_params_["learning_rate"]
+XGB_SUBSAMPLE = grid_search_phase2.best_params_["subsample"]
 best_cv_score = grid_search_phase2.best_score_
 
 print(f"  ✓ Phase 2 complete")
@@ -258,9 +262,9 @@ print("\n" + "=" * 70)
 print("SECTION 7: Saving predictions...")
 print("=" * 70)
 
-# Create submission dataframe
-submission = sample_submission.copy()
-submission["TARGET"] = y_test_pred_binary
+# Create submission dataframe with same format as Ridge
+submission = pd.DataFrame({"ROW_ID": X_test.index, "target": y_test_pred_binary})
+submission.set_index("ROW_ID", inplace=True)
 
 # Save predictions with parameters in filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

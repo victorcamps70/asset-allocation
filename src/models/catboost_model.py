@@ -260,9 +260,9 @@ print("\n" + "=" * 70)
 print("SECTION 7: Saving predictions...")
 print("=" * 70)
 
-# Create submission dataframe
-submission = sample_submission.copy()
-submission["TARGET"] = y_test_pred_binary
+# Create submission dataframe with same format as Ridge
+submission = pd.DataFrame({"ROW_ID": X_test.index, "target": y_test_pred_binary})
+submission.set_index("ROW_ID", inplace=True)
 
 # Save predictions with parameters in filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
