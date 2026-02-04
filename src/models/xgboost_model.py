@@ -96,6 +96,8 @@ print("\nPhase 1: Tuning n_estimators and max_depth (5-fold CV)...")
 param_grid_phase1 = {
     "n_estimators": [50, 100, 200],
     "max_depth": [4, 6, 8],
+    "reg_alpha": [0.0, 0.1, 1.0],  # L1 regularization
+    "reg_lambda": [0.5, 1.0, 2.0],  # L2 regularization
 }
 
 xgb_base = xgb.XGBClassifier(
@@ -123,10 +125,15 @@ grid_search_phase1.fit(X_train[features], y_train_binary)
 # Get best parameters from phase 1
 best_depth = grid_search_phase1.best_params_["max_depth"]
 best_n_est = grid_search_phase1.best_params_["n_estimators"]
+best_reg_alpha = grid_search_phase1.best_params_["reg_alpha"]
+best_reg_lambda = grid_search_phase1.best_params_["reg_lambda"]
 phase1_score = grid_search_phase1.best_score_
 
 print(
     f"  ✓ Phase 1 complete - Best n_estimators: {best_n_est}, Best max_depth: {best_depth}"
+)
+print(
+    f"    Best reg_alpha (L1): {best_reg_alpha}, Best reg_lambda (L2): {best_reg_lambda}"
 )
 print(f"    CV Accuracy: {phase1_score:.4f}")
 
@@ -140,6 +147,8 @@ param_grid_phase2 = {
 xgb_base2 = xgb.XGBClassifier(
     n_estimators=best_n_est,
     max_depth=best_depth,
+    reg_alpha=best_reg_alpha,
+    reg_lambda=best_reg_lambda,
     colsample_bytree=0.8,
     random_state=42,
     verbosity=0,
@@ -162,10 +171,15 @@ XGB_N_ESTIMATORS = grid_search_phase2.best_params_.get("n_estimators", best_n_es
 XGB_MAX_DEPTH = grid_search_phase2.best_params_.get("max_depth", best_depth)
 XGB_LEARNING_RATE = grid_search_phase2.best_params_["learning_rate"]
 XGB_SUBSAMPLE = grid_search_phase2.best_params_["subsample"]
+XGB_REG_ALPHA = best_reg_alpha
+XGB_REG_LAMBDA = best_reg_lambda
 best_cv_score = grid_search_phase2.best_score_
 
 print(f"  ✓ Phase 2 complete")
 print(f"    Best learning_rate: {XGB_LEARNING_RATE}, Best subsample: {XGB_SUBSAMPLE}")
+print(
+    f"    Regularization - L1 (reg_alpha): {XGB_REG_ALPHA}, L2 (reg_lambda): {XGB_REG_LAMBDA}"
+)
 print(f"    CV Accuracy: {best_cv_score:.4f}")
 
 # Train final model with best parameters
@@ -175,6 +189,8 @@ xgb_model = xgb.XGBClassifier(
     max_depth=XGB_MAX_DEPTH,
     learning_rate=XGB_LEARNING_RATE,
     subsample=XGB_SUBSAMPLE,
+    reg_alpha=XGB_REG_ALPHA,  # L1 regularization
+    reg_lambda=XGB_REG_LAMBDA,  # L2 regularization
     colsample_bytree=0.8,
     random_state=42,
     verbosity=0,
@@ -186,6 +202,7 @@ xgb_model.fit(X_train[features], y_train_binary)
 print(f"Model trained with best parameters")
 print(f"  n_estimators: {XGB_N_ESTIMATORS}, max_depth: {XGB_MAX_DEPTH}")
 print(f"  learning_rate: {XGB_LEARNING_RATE}, subsample: {XGB_SUBSAMPLE}")
+print(f"  reg_alpha (L1): {XGB_REG_ALPHA}, reg_lambda (L2): {XGB_REG_LAMBDA}")
 
 
 # =============================================================================
@@ -268,7 +285,7 @@ submission.set_index("ROW_ID", inplace=True)
 
 # Save predictions with parameters in filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-output_filename = f"data/submissions/preds_xgboost_d{XGB_MAX_DEPTH}_lr{XGB_LEARNING_RATE}_ne{XGB_N_ESTIMATORS}_impute{IMPUTATION_STRATEGY}_{timestamp}.csv"
+output_filename = f"data/submissions/preds_xgboost_d{XGB_MAX_DEPTH}_lr{XGB_LEARNING_RATE}_ne{XGB_N_ESTIMATORS}_a{XGB_REG_ALPHA}_l{XGB_REG_LAMBDA}_impute{IMPUTATION_STRATEGY}_{timestamp}.csv"
 
 # Create submissions directory if it doesn't exist
 os.makedirs("data/submissions", exist_ok=True)
