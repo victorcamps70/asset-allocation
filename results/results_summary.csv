@@ -5,3 +5,6 @@ timestamp,model,num_features,imputation_method,scaling,train_accuracy,test_posit
 2026-01-29 12:45:15,CatBoost,53,kde,None (tree-based),67.20662982167556,53.32914967053656
 2026-01-29 16:20:19,XGBoost,53,mice,None (tree-based),78.78282514945748,53.16598682146218
 2026-01-29 16:52:34,CatBoost,53,median,None (tree-based),67.20093801048431,53.70254157514904
+2026-01-30 12:19:24,RandomForest,53,median,None (tree-based),75.17383740013243,59.20614998431126
+2026-02-02 20:42:53,XGBoost,53,kde,None (tree-based),78.81868355996228,53.66488860997804
+2026-02-04 16:25:59,CatBoost (Direct),53,no_imputation,None (tree-based),55.40276204624407,59.588955130216505
